@@ -7,10 +7,10 @@ import { doc, setDoc } from "firebase/firestore";
 const webhookSecret: string = process.env.WEBHOOK_SECRET || "your-secret";
 
 const defaultPreferences = [
-  "Arrays & Hashing", "Two Pointers", "Stack", "Binary Search", "Sliding Window",
-  "Linked List", "Trees", "Tries", "Backtracking", "Heap / Priority Queue",
-  "Graphs", "1-D DP", "Intervals", "Greedy", "Advanced Graphs", "2-D DP",
-  "Bit Manipulation", "Math & Geometry"
+  "arrays_and_hashing", "two_pointers", "stack", "binary_search", "sliding_window",
+  "linked_list", "trees", "tries", "backtracking", "heap_priority_queue",
+  "graphs", "1d_dynamic_programming", "intervals", "greedy", "advanced_graphs", "2d_dynamic_programming",
+  "bit_manipulation", "math_and_geometry"
 ];
 
 export async function POST(req: Request) {
