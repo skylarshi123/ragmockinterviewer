@@ -34,3 +34,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+ragmockinterviewer-firebase-adminsdk-1sjho-9d01501846.json
