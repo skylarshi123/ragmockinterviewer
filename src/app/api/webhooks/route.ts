@@ -41,9 +41,17 @@ export async function POST(req: Request) {
       preferences: defaultPreferences,
       completed_problems: [],
       flashcards: [],
-      sessionSummaries: [],
+      suggestedNextProblem: [],
       successRate: 50
     });
+    //sessionSummaries will exist conceptually and will activiate if you do something like this:
+    // await addDoc(collection(db, "users", userId, "sessionSummaries"), {
+    //   // Session summary data
+    //   date: serverTimestamp(),
+    //   problemsSolved: 10,
+    //   timeSpent: 3600, // in seconds
+    //   // ... other relevant session data
+    // });
     return new Response('User created successfully', { status: 200 })
   } catch (error) {
     console.error('Error creating user:', error)
