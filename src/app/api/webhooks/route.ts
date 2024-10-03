@@ -41,7 +41,7 @@ export async function POST(req: Request) {
       preferences: defaultPreferences,
       completed_problems: [],
       flashcards: [],
-      suggestedNextProblem: [],
+      suggestedNextProblem: ["two_pointers", "3sum"],
       successRate: 50
     });
     //sessionSummaries will exist conceptually and will activiate if you do something like this:
