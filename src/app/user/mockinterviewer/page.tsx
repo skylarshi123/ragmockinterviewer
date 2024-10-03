@@ -1,6 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/firebase'; // Adjust the import path as needed
 import { doc, getDoc, collection } from 'firebase/firestore';
+import Chatbot from './chatbot'; // Adjust the import path as needed
 
 export default async function Description() {
   const { userId } = auth();
@@ -54,6 +55,8 @@ export default async function Description() {
           </li>
         ))}
       </ul>
+      <h4>Your Solution:</h4>
+      <Chatbot problemDetails={problemData} />
     </div>
   );
 }

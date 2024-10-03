@@ -29,6 +29,7 @@
     "openai": "^4.65.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-markdown": "^9.0.1",
     "react-syntax-highlighter": "^15.5.0",
     "save": "^2.9.0",
     "svix": "^1.35.0",
