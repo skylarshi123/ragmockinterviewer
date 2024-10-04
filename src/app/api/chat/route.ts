@@ -1,4 +1,4 @@
-import {NextResponse} from 'next/server';
+import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
 const systemPrompt = `# LeetCode Interviewer Chatbot System Prompt
@@ -58,28 +58,29 @@ You are an AI-powered chatbot designed to simulate an experienced technical inte
 
 Remember, your goal is to create a realistic and educational interview experience that helps candidates improve their coding skills and prepare for actual technical interviews.`;
 
-
-export async function POST(req){
+export async function POST(req) {
     const openai = new OpenAI()
-    const data = await req.json();
-    const problemDetails = data[0].content
+    const { messages, code } = await req.json();
+    const problemDetails = messages[0].content;
+    
     const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
-            {role: "system", content: systemPrompt},
-            {role: "user", content: `Here's the problem we'll be discussing: ${problemDetails}`},
-            ...data.slice(1),
+            { role: "system", content: systemPrompt },
+            { role: "user", content: `Here's the problem we'll be discussing: ${problemDetails}` },
+            ...messages.slice(1),
+            { role: "user", content: `Current code in the editor:\n\`\`\`\n${code}\n\`\`\`` },
         ],
         stream: true,
     });
 
     const stream = new ReadableStream({
-        async start(controller){
+        async start(controller) {
             const encoder = new TextEncoder();
             try {
-                for await (const chunk of completion){
+                for await (const chunk of completion) {
                     const content = chunk.choices[0]?.delta?.content;
-                    if (content){
+                    if (content) {
                         const text = encoder.encode(content)
                         controller.enqueue(text);
                     }

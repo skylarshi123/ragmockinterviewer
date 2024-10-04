@@ -4,10 +4,13 @@ import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { useRouter } from 'next/navigation';
+
 
 interface ProblemDetails {
   name: string;
@@ -28,7 +31,41 @@ interface Message {
   content: string;
 }
 
+function CodeEditor({ initialCode, onCodeChange }: { initialCode: string; onCodeChange: (code: string) => void }) {
+  const [code, setCode] = useState(initialCode);
+
+  useEffect(() => {
+    setCode(initialCode);
+  }, [initialCode]);
+
+  const handleCodeChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newCode = event.target.value;
+    setCode(newCode);
+    onCodeChange(newCode);
+  };
+
+  return (
+    <Card className="w-full h-full">
+      <CardHeader>
+        <CardTitle>Code Editor</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Textarea
+          value={code}
+          onChange={handleCodeChange}
+          className="w-full h-[400px] font-mono text-sm"
+          placeholder="Write your code here..."
+        />
+        <div className="mt-4 flex justify-end">
+          <Button onClick={() => onCodeChange(code)}>Update Code</Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function Chatbot({ problemDetails, suggestedProblemType, suggestedProblemName }: ChatbotProps) {
+    const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -48,6 +85,7 @@ How would you like to approach solving this problem?`,
     }
   ]);
   const [message, setMessage] = useState("");
+  const [code, setCode] = useState(problemDetails.providedCode);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -72,7 +110,10 @@ How would you like to approach solving this problem?`,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify([...messages, {role: 'user', content: message}]),
+        body: JSON.stringify({
+          messages: [...messages, {role: 'user', content: message}],
+          code: code,
+        }),
       });
 
       if (!response.body) throw new Error('No response body');
@@ -114,7 +155,8 @@ How would you like to approach solving this problem?`,
         body: JSON.stringify({
           problemType: suggestedProblemType,
           problemName: suggestedProblemName,
-          conversation: conversation
+          conversation: conversation,
+          finalCode: code,
         }),
       });
 
@@ -124,6 +166,8 @@ How would you like to approach solving this problem?`,
 
       const result = await response.json();
       console.log('Session ended:', result);
+      router.refresh();
+      router.push('/user/dashboard');
       // Here you can handle the UI update, maybe show a success message or redirect
     } catch (error) {
       console.error('Error ending session:', error);
@@ -132,51 +176,56 @@ How would you like to approach solving this problem?`,
   };
 
   return (
-    <Card>
-      <CardContent className="p-6">
-        <ScrollArea className="h-[400px] w-full mb-4">
-          {messages.map((message, index) => (
-            <div key={index} className={`mb-4 ${message.role === 'assistant' ? 'bg-secondary/50' : 'bg-primary/10'} p-3 rounded-lg`}>
-              <ReactMarkdown
-                components={{
-                  code({node, inline, className, children, ...props}) {
-                    const match = /language-(\w+)/.exec(className || '')
-                    return !inline && match ? (
-                      <SyntaxHighlighter
-                        style={atomDark}
-                        language={match[1]}
-                        PreTag="div"
-                        {...props}
-                      >
-                        {String(children).replace(/\n$/, '')}
-                      </SyntaxHighlighter>
-                    ) : (
-                      <code className={className} {...props}>
-                        {children}
-                      </code>
-                    )
-                  }
-                }}
-              >
-                {message.content}
-              </ReactMarkdown>
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
-        </ScrollArea>
-        <div className="flex gap-2">
-          <Input
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Type your message here..."
-            className="flex-grow"
-          />
-          <Button onClick={sendMessage}>Send</Button>
-          <Button onClick={endSession} variant="outline">End Session</Button>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="flex gap-4">
+      <Card className="w-1/2">
+        <CardContent className="p-6">
+          <ScrollArea className="h-[400px] w-full mb-4">
+            {messages.map((message, index) => (
+              <div key={index} className={`mb-4 ${message.role === 'assistant' ? 'bg-secondary/50' : 'bg-primary/10'} p-3 rounded-lg`}>
+                <ReactMarkdown
+                  components={{
+                    code({node, inline, className, children, ...props}) {
+                      const match = /language-(\w+)/.exec(className || '')
+                      return !inline && match ? (
+                        <SyntaxHighlighter
+                          style={atomDark}
+                          language={match[1]}
+                          PreTag="div"
+                          {...props}
+                        >
+                          {String(children).replace(/\n$/, '')}
+                        </SyntaxHighlighter>
+                      ) : (
+                        <code className={className} {...props}>
+                          {children}
+                        </code>
+                      )
+                    }
+                  }}
+                >
+                  {message.content}
+                </ReactMarkdown>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </ScrollArea>
+          <div className="flex gap-2">
+            <Input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              placeholder="Type your message here..."
+              className="flex-grow"
+            />
+            <Button onClick={sendMessage}>Send</Button>
+            <Button onClick={endSession} variant="outline">End Session</Button>
+          </div>
+        </CardContent>
+      </Card>
+      <div className="w-1/2">
+        <CodeEditor initialCode={problemDetails.providedCode} onCodeChange={setCode} />
+      </div>
+    </div>
   );
 }
