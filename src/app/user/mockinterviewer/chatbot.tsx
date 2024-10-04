@@ -4,6 +4,10 @@ import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Card, CardContent } from "@/components/ui/card"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 interface ProblemDetails {
   name: string;
@@ -128,48 +132,51 @@ How would you like to approach solving this problem?`,
   };
 
   return (
-    <div>
-      <div>
-        {messages.map((message, index) => (
-          <div key={index}>
-            <ReactMarkdown
-              components={{
-                code({node, inline, className, children, ...props}) {
-                  const match = /language-(\w+)/.exec(className || '')
-                  return !inline && match ? (
-                    <SyntaxHighlighter
-                      style={atomDark}
-                      language={match[1]}
-                      PreTag="div"
-                      {...props}
-                    >
-                      {String(children).replace(/\n$/, '')}
-                    </SyntaxHighlighter>
-                  ) : (
-                    <code className={className} {...props}>
-                      {children}
-                    </code>
-                  )
-                }
-              }}
-            >
-              {message.content}
-            </ReactMarkdown>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-      <div>
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-          placeholder="Type your message here..."
-        />
-        <button onClick={sendMessage}>Send</button>
-        <button onClick={endSession}>End Session</button>
-      </div>
-    </div>
+    <Card>
+      <CardContent className="p-6">
+        <ScrollArea className="h-[400px] w-full mb-4">
+          {messages.map((message, index) => (
+            <div key={index} className={`mb-4 ${message.role === 'assistant' ? 'bg-secondary/50' : 'bg-primary/10'} p-3 rounded-lg`}>
+              <ReactMarkdown
+                components={{
+                  code({node, inline, className, children, ...props}) {
+                    const match = /language-(\w+)/.exec(className || '')
+                    return !inline && match ? (
+                      <SyntaxHighlighter
+                        style={atomDark}
+                        language={match[1]}
+                        PreTag="div"
+                        {...props}
+                      >
+                        {String(children).replace(/\n$/, '')}
+                      </SyntaxHighlighter>
+                    ) : (
+                      <code className={className} {...props}>
+                        {children}
+                      </code>
+                    )
+                  }
+                }}
+              >
+                {message.content}
+              </ReactMarkdown>
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </ScrollArea>
+        <div className="flex gap-2">
+          <Input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+            placeholder="Type your message here..."
+            className="flex-grow"
+          />
+          <Button onClick={sendMessage}>Send</Button>
+          <Button onClick={endSession} variant="outline">End Session</Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
