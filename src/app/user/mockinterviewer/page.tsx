@@ -56,7 +56,11 @@ export default async function Description() {
         ))}
       </ul>
       <h4>Your Solution:</h4>
-      <Chatbot problemDetails={problemData} />
+      <Chatbot 
+        problemDetails={problemData} 
+        suggestedProblemType={suggestedProblemType}
+        suggestedProblemName={suggestedProblemName}
+      />
     </div>
   );
 }
