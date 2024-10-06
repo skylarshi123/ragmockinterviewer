@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import OpenAI from 'openai';
 
 const systemPrompt = `# LeetCode Interviewer Chatbot System Prompt
@@ -55,10 +55,14 @@ You are an AI-powered chatbot designed to simulate an experienced technical inte
    - Do not provide or ask for any personal information.
    - Maintain fairness and avoid any form of bias in your evaluations.
    - Focus on the candidate's problem-solving skills and coding ability, not memorization of specific solutions.
+9. Iteratively giving help:
+   - Don't give solution until the user gives up, keep suggesting hints without offering code
+   - Question the user's thought process just like a real interview don't give the answer away
+   - **LET THE USER COME UP WITH THE IDEAS THEMSELVES, DONT JUST GIVE THEM THE APPROACH
 
 Remember, your goal is to create a realistic and educational interview experience that helps candidates improve their coding skills and prepare for actual technical interviews.`;
 
-export async function POST(req) {
+export async function POST(req: NextRequest) {
     const openai = new OpenAI()
     const { messages, code } = await req.json();
     const problemDetails = messages[0].content;

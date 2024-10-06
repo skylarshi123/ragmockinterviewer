@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useRouter } from 'next/navigation';
+import { Components } from 'react-markdown';
 
 
 interface ProblemDetails {
@@ -29,6 +28,16 @@ interface ChatbotProps {
 interface Message {
   role: "assistant" | "user";
   content: string;
+}
+
+const CodeComponent: Components['code'] = ({className, children, ...props}) => {
+  return (
+    <pre className="bg-gray-100 p-2 rounded">
+      <code className={className} {...props}>
+        {children}
+      </code>
+    </pre>
+  )
 }
 
 function CodeEditor({ initialCode, onCodeChange }: { initialCode: string; onCodeChange: (code: string) => void }) {
@@ -65,7 +74,7 @@ function CodeEditor({ initialCode, onCodeChange }: { initialCode: string; onCode
 }
 
 export default function Chatbot({ problemDetails, suggestedProblemType, suggestedProblemName }: ChatbotProps) {
-    const router = useRouter()
+  const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -168,10 +177,8 @@ How would you like to approach solving this problem?`,
       console.log('Session ended:', result);
       router.refresh();
       router.push('/user/dashboard');
-      // Here you can handle the UI update, maybe show a success message or redirect
     } catch (error) {
       console.error('Error ending session:', error);
-      // Handle error in UI
     }
   };
 
@@ -184,23 +191,7 @@ How would you like to approach solving this problem?`,
               <div key={index} className={`mb-4 ${message.role === 'assistant' ? 'bg-secondary/50' : 'bg-primary/10'} p-3 rounded-lg`}>
                 <ReactMarkdown
                   components={{
-                    code({node, inline, className, children, ...props}) {
-                      const match = /language-(\w+)/.exec(className || '')
-                      return !inline && match ? (
-                        <SyntaxHighlighter
-                          style={atomDark}
-                          language={match[1]}
-                          PreTag="div"
-                          {...props}
-                        >
-                          {String(children).replace(/\n$/, '')}
-                        </SyntaxHighlighter>
-                      ) : (
-                        <code className={className} {...props}>
-                          {children}
-                        </code>
-                      )
-                    }
+                    code: CodeComponent
                   }}
                 >
                   {message.content}

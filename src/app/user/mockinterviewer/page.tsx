@@ -8,6 +8,15 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+// This should match the ProblemDetails interface used in the Chatbot component
+interface ProblemDetails {
+  name: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  description: string;
+  providedCode: string;
+  examples: Record<string, string>;
+}
+
 export default async function Description() {
   const { userId } = auth();
 
@@ -59,7 +68,19 @@ export default async function Description() {
     );
   }
 
-  const problemData = problemSnap.data();
+  const rawProblemData = problemSnap.data();
+  
+  // Convert the raw problem data to match ProblemDetails interface
+  const problemData: ProblemDetails = {
+    name: rawProblemData.name,
+    difficulty: rawProblemData.difficulty,
+    description: rawProblemData.description,
+    providedCode: rawProblemData.providedCode,
+    examples: Object.entries(rawProblemData.examples || {}).reduce((acc, [key, value]) => {
+      acc[key] = renderExampleValue(value);
+      return acc;
+    }, {} as Record<string, string>)
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -101,7 +122,7 @@ export default async function Description() {
               <AccordionTrigger>Examples</AccordionTrigger>
               <AccordionContent>
                 <ul className="list-disc pl-4">
-                  {Object.entries(problemData.examples || {}).map(([key, value]) => (
+                  {Object.entries(problemData.examples).map(([key, value]) => (
                     <li key={key} className="mb-2">
                       <strong>{key}:</strong> {value}
                     </li>
@@ -124,4 +145,17 @@ export default async function Description() {
       </Card>
     </div>
   );
+}
+
+function renderExampleValue(value: unknown): string {
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  } else if (value === null) {
+    return 'null';
+  } else if (Array.isArray(value)) {
+    return JSON.stringify(value);
+  } else if (typeof value === 'object') {
+    return JSON.stringify(value);
+  }
+  return '';
 }

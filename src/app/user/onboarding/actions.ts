@@ -10,8 +10,12 @@ export async function updatePreferences(userId: string, preferences: string[]): 
       preferences: preferences
     });
     return { success: true };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error updating preferences:", error);
-    return { success: false, error: error.message };
+    if (error instanceof Error) {
+      return { success: false, error: error.message };
+    } else {
+      return { success: false, error: "An unknown error occurred" };
+    }
   }
 }
