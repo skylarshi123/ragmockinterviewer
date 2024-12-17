@@ -1,7 +1,7 @@
 # TechPrep AI - Your Personal Technical Interview Coach 🤖
 
 <div align="center">
-  <img src="/api/placeholder/800/400" alt="TechPrep AI Interface" />
+  <img src="https://media.licdn.com/dms/image/v2/D5612AQEoTzK2rVxHZQ/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1707420465234?e=1740009600&v=beta&t=uTf1UXMoixTu4hIkcKvHUyXysWYkN0u3sicF3eghG7c" alt="TechPrep AI Interface" />
   
   [![Next.js](https://img.shields.io/badge/Next.js-13.0-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
   [![Firebase](https://img.shields.io/badge/Firebase-9.0-orange?style=for-the-badge&logo=firebase)](https://firebase.google.com/)
@@ -17,9 +17,6 @@
 
 TechPrep AI is an intelligent mock interviewing platform that simulates real technical interviews using advanced AI. By combining RAG (Retrieval-Augmented Generation) technology with personalized learning algorithms, it provides a tailored interview preparation experience that adapts to your skill level and learning needs.
 
-<div align="center">
-  <img src="/api/placeholder/800/300" alt="System Architecture" />
-</div>
 
 ## ✨ Key Features
 
