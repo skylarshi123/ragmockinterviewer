@@ -104,8 +104,6 @@ git clone https://github.com/skylarshi123/ragmockinterviewer.git
 # Install dependencies
 npm install
 
-# Set up environment variables
-cp .env.example .env.local
 
 # Run development server
 npm run dev
