@@ -44,6 +44,12 @@ TechPrep AI is an intelligent mock interviewing platform that simulates real tec
 - Actionable feedback for improvement
 - Historical performance trends
 
+### 💳 Premium Subscription Features
+- Secure payment processing with Stripe
+- Access to advanced interview scenarios
+- Unlimited practice sessions
+- Premium problem sets and solutions
+
 ## 🛠️ Technical Architecture
 
 ### Backend Infrastructure
@@ -107,6 +113,24 @@ npm install
 
 # Run development server
 npm run dev
+
+#Your secrets and publishable keys
+.env.local:
+# Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+
+# Firebase Configuration
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.storage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+
+# Stripe Configuration
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+STRIPE_SECRET_KEY=your_stripe_secret_key
 ```
 
 ## 🤝 Contributing
